@@ -18,10 +18,17 @@ using namespace RGBControls;
 #define RGB_G A4
 #define RGB_B A5
 
+// goggle servo controller
 Goggle goggle = Goggle();
+
+// sound and music controller
 Sound sound = Sound();
+
+// rotary encoder and button controllers
 ClickButton button(BUTTON, LOW, CLICKBTN_PULLUP);
 Encoder encoder(ENCODER_A, ENCODER_B);
+
+// RGB led controller and preset colors
 Led led(RGB_R, RGB_G, RGB_B, false);
 Color red(100, 0, 0);
 Color green(0, 100, 0);
@@ -30,6 +37,8 @@ Color yellow(100, 100, 0);
 Color magenta(100, 0, 100);
 Color cyan(0, 100, 100);
 Color white(100, 100, 100);
+
+// variables
 int brightness = 50;     // % brightness
 int function = 0;        // Current mode
 long oldPosition = -999; // monitor encoder movement
@@ -40,13 +49,14 @@ void setup() {
   Serial.begin(9600);
   pinMode(BUTTON, INPUT_PULLUP);
   pinMode(RED_LED, OUTPUT);
-  //pinMode(GREEN_LED, OUTPUT);
+  //pinMode(GREEN_LED, OUTPUT); // you can uncomment and use, I broke my green led while assembling :/
   goggle.initGoggles(SERVO_L, SERVO_R);
   sound.initSound(PIEZO, RED_LED);
   led.off();
 }
 
 void loop() {
+  // check for button presses
   button.Update();  
   if(button.clicks != 0) function = button.clicks;
   if(function == 1) {
@@ -130,6 +140,7 @@ void loop() {
     }
   }
   
+  // check for encoder movement
   long newPosition = encoder.read();
   newPosition = newPosition % 175;
   if (newPosition < 5) {
